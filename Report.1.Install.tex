@@ -1,0 +1,52 @@
+\documentclass[12pt]{report}
+\usepackage{lingmacros}
+\usepackage{tree-dvips}
+\usepackage{graphicx}
+\usepackage{listings}
+\graphicspath{ {images/} }
+
+\begin{document}
+
+\section*{Report Labwork I}
+
+Prepare for Labwork:
+
+{\small
+\enumsentence{Clone employees database from Github}}
+{\small
+\enumsentence{Create Fork from Github repository}}
+{\small
+\enumsentence{Install Mysql}}
+
+
+\subsection*{Step 1: Import the Database}
+
+\begin{lstlisting}[language=bash]
+Command: mysql -uroot < employees.sql
+\end{lstlisting}
+Output:
+\\
+\includegraphics[width=0.8\paperwidth]{import_DB}
+\\
+\\
+\\
+\subsection*{Step 2: Run md5 check}
+\begin{lstlisting}[language=bash]
+Command: mysql -uroot < test_employees_md5.sql
+\end{lstlisting}
+Output:
+\\
+\includegraphics[width=0.8\paperwidth]{test_md5}
+\\
+\\
+\\
+\subsection*{Step 3: Run SHA check}
+\begin{lstlisting}[language=bash]
+Command: mysql -uroot < test_employees_sha.sql
+\end{lstlisting}
+Output:
+\\
+\includegraphics[width=0.8\paperwidth]{test_sha}
+
+
+\end{document}
