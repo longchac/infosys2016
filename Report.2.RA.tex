@@ -84,30 +84,6 @@ Command: \project_{first_name, last_name} employees;
 \end{lstlisting}
 \textbf Output:
 \begin{lstlisting}[language=sql]
-Output schema: (dept_name VARCHAR)
------
-Customer Service
-Development
-Finance
-Human Resources
-Marketing
-Production
-Quality Management
-Research
-Sales
------
-Total number of rows: 9
-\end{lstlisting}
-
-
-\subsection*{IV: Names of all departments}
-\begin{lstlisting}[language=bash]
-Command: \project_{dept_name} departments;
-\end{lstlisting}
-\textbf Output:
-
-
-\begin{lstlisting}[language=sql]
 Zvonko|Vesna
 Zvonko|Viele
 Zvonko|Vigier
@@ -126,6 +102,29 @@ Zvonko|Zuberek
 -----
 Total number of rows: 279408
 
+\end{lstlisting}
+
+\subsection*{IV: Names of all departments}
+\begin{lstlisting}[language=bash]
+Command: \project_{dept_name} departments;
+\end{lstlisting}
+\textbf Output:
+
+
+\begin{lstlisting}[language=sql]
+Output schema: (dept_name VARCHAR)
+-----
+Customer Service
+Development
+Finance
+Human Resources
+Marketing
+Production
+Quality Management
+Research
+Sales
+-----
+Total number of rows: 9
 \end{lstlisting}
 
 
