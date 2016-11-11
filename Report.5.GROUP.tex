@@ -1,0 +1,238 @@
+\documentclass[12pt]{report}
+\usepackage{lingmacros}
+\usepackage{tree-dvips}
+\usepackage{listings}
+\usepackage{tabulary}
+
+\begin{document}
+
+\section*{Report Labwork III}
+
+Prepare for Labwork:
+
+{\small
+\enumsentence{Select DATABASE employees}}
+
+
+\subsection*{I: What is the average salary of each employee?}
+
+\begin{lstlisting}[language=sql]
+SELECT
+	emp_no ,
+	AVG(DISTINCT(salary)) AS avg_salary
+FROM
+	salaries
+GROUP BY
+	emp_no;
+\end{lstlisting}
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
+| 499990 |  43325.0000 |
+| 499991 |  47829.5000 |
+| 499992 |  64179.7500 |
+| 499993 |  40944.6667 |
+| 499994 |  40000.0000 |
+| 499995 |  45891.6667 |
+| 499996 |  63134.1429 |
+| 499997 |  66475.8667 |
+| 499998 |  46665.5556 |
+| 499999 |  70625.0000 |
++--------+-------------+
+300024 rows in set (1.43 sec)
+-------------------------------------------
+
+\subsection*{II: How much was each employee paid in total?}
+
+\begin{lstlisting}[language=sql]
+SELECT
+	emp_no ,
+	SUM(salary) AS total_salary
+FROM
+	salaries
+GROUP BY
+	emp_no;
+
+\end{lstlisting}
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
+| 499990 |       129975 |
+| 499991 |       286977 |
+| 499992 |      1026876 |
+| 499993 |       245668 |
+| 499994 |        40000 |
+| 499995 |       275350 |
+| 499996 |       441939 |
+| 499997 |       997138 |
+| 499998 |       419990 |
+| 499999 |       353125 |
++--------+--------------+
+300024 rows in set (1.37 sec)
+
+\end{lstlisting}
+-------------------------------------------
+
+\subsection*{III: Minimum, maximum and total salaries of each department?}
+
+\begin{lstlisting}[language=sql]
+
+SELECT
+	dept_no ,
+	MAX(salary) AS max_salary ,
+	MIN(salary) AS min_salary ,
+	SUM(salary) AS total_salary
+FROM
+	salaries
+JOIN employees ON employees.emp_no = salaries.emp_no
+JOIN dept_emp ON dept_emp.emp_no = employees.emp_no
+GROUP BY
+	dept_no;
+\end{lstlisting}
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
++---------+------------+------------+--------------+
+| dept_no | max_salary | min_salary | total_salary |
++---------+------------+------------+--------------+
+| d002    |     142395 |      38812 |  11650834677 |
+| d003    |     141953 |      38735 |   9363811425 |
+| d004    |     138273 |      38623 |  41554438942 |
+| d006    |     132103 |      38786 |  10865203635 |
+| d009    |     144866 |      38836 |  13143639841 |
+| d010    |     158220 |      38849 | 108255706851 |
++---------+------------+------------+--------------+
+6 rows in set (5.84 sec)
+\end{lstlisting}
+
+-------------------------------------------
+
+\subsection*{IV: Which departments have paid more than 20 billion dollars for their employees?}
+\begin{lstlisting}[language=sql]
+
+SELECT
+	dept_no ,
+	SUM(salary) AS total_salary
+FROM
+	salaries
+JOIN employees ON employees.emp_no = salaries.emp_no
+JOIN dept_emp ON dept_emp.emp_no = employees.emp_no
+GROUP BY
+	dept_no
+HAVING (total_salary > 20000000000);
+
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
++---------+--------------+
+| dept_no | total_salary |
++---------+--------------+
+| d004    |  41554438942 |
+| d010    | 108255706851 |
++---------+--------------+
+2 rows in set (5.35 sec)
+
+
+\end{lstlisting}
+
+------------------------------------------
+
+\subsection*{V: Total salaries of male employees in each department?}
+\begin{lstlisting}[language=sql]
+
+SELECT
+	dept_no ,
+	SUM(salary) AS total_males_salary
+FROM
+	salaries
+JOIN employees ON employees.emp_no = salaries.emp_no
+JOIN dept_emp ON dept_emp.emp_no = employees.emp_no
+WHERE
+	employees.gender = "M"
+GROUP BY
+	dept_no;
+
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
++---------+--------------------+
+| dept_no | total_males_salary |
++---------+--------------------+
+| d002    |         6940675318 |
+| d003    |         5619533959 |
+| d004    |        24873889749 |
+| d006    |         6472073211 |
+| d009    |         7865587983 |
+| d010    |        65141869729 |
++---------+--------------------+
+6 rows in set (3.51 sec)
+
+\end{lstlisting}
+
+------------------------------------------
+
+\subsection*{VI: Total salaries of department managers for each department,from highest to lowest?}
+\begin{lstlisting}[language=sql]
+
+SELECT
+	dept_emp.dept_no ,
+	dept_manager.emp_no ,
+	SUM(salary) AS total_manager_salary
+FROM
+	salaries
+JOIN employees ON employees.emp_no = salaries.emp_no
+JOIN dept_emp ON dept_emp.emp_no = employees.emp_no
+JOIN dept_manager ON dept_manager.emp_no = employees.emp_no
+GROUP BY
+	dept_emp.dept_no ,
+	dept_manager.emp_no;
+
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
++---------+--------+----------------------+
+| dept_no | emp_no | total_manager_salary |
++---------+--------+----------------------+
+| d002    | 110085 |              1310810 |
+| d002    | 110114 |              1238562 |
+| d003    | 110183 |              1133824 |
+| d003    | 110228 |               964474 |
+| d004    | 110303 |              1026942 |
+| d004    | 110344 |              1081365 |
+| d004    | 110386 |               750316 |
+| d004    | 110420 |               515381 |
+| d006    | 110725 |              1463422 |
+| d006    | 110765 |               774488 |
+| d006    | 110800 |              1087928 |
+| d006    | 110854 |               836280 |
+| d009    | 111692 |              1048025 |
+| d009    | 111784 |               750497 |
+| d009    | 111877 |               691464 |
+| d009    | 111939 |               697675 |
+| d010    | 110022 |              1604309 |
+| d010    | 110039 |              1488700 |
+| d010    | 110511 |              1126227 |
+| d010    | 110567 |               902149 |
+| d010    | 111035 |              1516364 |
+| d010    | 111133 |              1398754 |
+| d010    | 111400 |              1569911 |
+| d010    | 111534 |               988750 |
++---------+--------+----------------------+
+24 rows in set (0.01 sec)
+
+\end{lstlisting}
+
+
+\end{document}

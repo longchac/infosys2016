@@ -43,14 +43,14 @@ VALUES ("d011", "Marketing and Sales");
 \\
 (2). Update employees from Marketing to New Department
 \begin{lstlisting}[language=sql]
-UPDATE IGNORE `dept_emp` SET `dept_emp`.dept_no = "d010" 
+UPDATE IGNORE `dept_emp` SET `dept_emp`.dept_no = "d011" 
 WHERE `dept_emp`.dept_no = "d001";
 \end{lstlisting}
 ---------------------------------------------------------
 \\
 (3). Update employees from Sales to New Department
 \begin{lstlisting}[language=sql]
-UPDATE IGNORE `dept_emp` SET `dept_emp`.dept_no = "d010" 
+UPDATE IGNORE `dept_emp` SET `dept_emp`.dept_no = "d011" 
 WHERE `dept_emp`.dept_no = "d007";
 \end{lstlisting}
 
