@@ -196,8 +196,7 @@ JOIN employees ON employees.emp_no = salaries.emp_no
 JOIN dept_emp ON dept_emp.emp_no = employees.emp_no
 JOIN dept_manager ON dept_manager.emp_no = employees.emp_no
 GROUP BY
-	dept_emp.dept_no ,
-	dept_manager.emp_no;
+	dept_emp.dept_no
 
 \end{lstlisting}
 
@@ -208,32 +207,16 @@ GROUP BY
 +---------+----------------------+
 | dept_no | total_manager_salary |
 +---------+----------------------+
-| d002    |              1310810 |
-| d002    |              1238562 |
-| d003    |              1133824 |
-| d003    |               964474 |
-| d004    |              1026942 |
-| d004    |              1081365 |
-| d004    |               750316 |
-| d004    |               515381 |
-| d006    |              1463422 |
-| d006    |               774488 |
-| d006    |              1087928 |
-| d006    |               836280 |
-| d009    |              1048025 |
-| d009    |               750497 |
-| d009    |               691464 |
-| d009    |               697675 |
-| d010    |              1126227 |
-| d010    |               902149 |
-| d010    |              1569911 |
-| d010    |               988750 |
-| d011    |              1604309 |
-| d011    |              1488700 |
-| d011    |              1516364 |
-| d011    |              1398754 |
+| d002    |              2549372 |
+| d003    |              2098298 |
+| d004    |              3374004 |
+| d006    |              4162118 |
+| d009    |              3187661 |
+| d010    |              4587037 |
+| d011    |              6008127 |
 +---------+----------------------+
-24 rows in set (0.00 sec)
+7 rows in set (0.00 sec)
+
 
 \end{lstlisting}
 
