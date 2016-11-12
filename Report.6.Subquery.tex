@@ -1,0 +1,183 @@
+\documentclass[12pt]{report}
+\usepackage{lingmacros}
+\usepackage{tree-dvips}
+\usepackage{listings}
+
+\begin{document}
+
+\section*{Report Labwork VI}
+
+Prepare for Labwork:
+
+{\small
+\enumsentence{Using employees database}}
+
+\subsection*{I: Who have the same name as the managers of the “Finance” department?}
+
+\begin{lstlisting}[language=sql]
+SELECT
+	first_name ,
+	last_name
+FROM
+	employees
+WHERE
+	last_name IN(
+		SELECT
+			last_name
+		FROM
+			dept_manager
+		JOIN employees ON dept_manager.emp_no = employees.emp_no
+		JOIN departments ON dept_manager.dept_no = departments.dept_no
+		WHERE
+			departments.dept_name = 'Finance'
+	);
+\end{lstlisting}
+
+
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
+| Gilbert       | Alpin      |
+| Ramalingam    | Alpin      |
+| Ekawit        | Alpin      |
+| Hilary        | Legleitner |
+| Geoffry       | Alpin      |
+| Heping        | Alpin      |
+| Hidde         | Alpin      |
++---------------+------------+
+408 rows in set (0.21 sec)
+\end{lstlisting}
+----------------------------------------------------
+
+
+\subsection*{II: Who in the “Production” department were hired after the promotion of the last manager in that department?}
+
+\begin{lstlisting}[language=sql]
+SELECT
+	dept_emp.emp_no ,
+	dept_emp.from_date
+FROM
+	dept_emp
+JOIN departments ON dept_emp.dept_no = departments.dept_no
+WHERE
+	dept_name = 'Production'
+AND dept_emp.from_date >(
+	SELECT
+		MAX(from_date)
+	FROM
+		dept_manager
+	WHERE
+		dept_no = 'd004'
+);
+\end{lstlisting}
+
+
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
+| 499923 | 1998-11-01 |
+| 499925 | 1999-10-27 |
+| 499948 | 1999-04-09 |
+| 499971 | 1997-03-05 |
+| 499974 | 1996-12-11 |
+| 499983 | 2001-12-09 |
+| 499993 | 1997-04-07 |
+| 499995 | 1997-06-02 |
+| 499999 | 1997-11-30 |
++--------+------------+
+19513 rows in set (0.17 sec)
+
+\end{lstlisting}
+----------------------------------------------------
+
+
+\subsection*{III: Find the average salary of each department, from highest to lowest.}
+
+\begin{lstlisting}[language=sql]
+SELECT
+	merge_emp_dept.dept_name ,
+	AVG(salary) AS avg_salary
+FROM
+	(
+		SELECT
+			employees.emp_no ,
+			dept_name
+		FROM
+			departments
+		JOIN dept_emp ON departments.dept_no = dept_emp.dept_no
+		JOIN employees ON employees.emp_no = dept_emp.emp_no
+	) AS merge_emp_dept
+JOIN salaries ON merge_emp_dept.emp_no = salaries.emp_no
+GROUP BY
+	merge_emp_dept.dept_name
+ORDER BY 
+	avg_salary DESC;
+\end{lstlisting}
+
+
+\textbf{Output:}
+\begin{lstlisting}[language=sql]
+
++--------------------------+------------+
+| dept_name                | avg_salary |
++--------------------------+------------+
+| Marketing and Sales      | 78220.6010 |
+| Finance                  | 70489.3649 |
+| Production               | 59605.4825 |
+| Research and Development | 59517.6088 |
+| Customer Service         | 58770.3665 |
+| Quality Management       | 57251.2719 |
+| Human Resources          | 55574.8794 |
++--------------------------+------------+
+7 rows in set (8.61 sec)
+
+
+\end{lstlisting}
+----------------------------------------------------
+
+\subsection*{IV: Find the average salary of each type of Engineer, from highest to lowest.}
+
+\begin{lstlisting}[language=sql]
+SELECT
+	merge_titles_emp.title,
+	AVG(salary) AS avg_salary
+FROM
+	(
+		SELECT
+			employees.emp_no,
+			title
+		FROM
+			titles
+		JOIN employees ON employees.emp_no = titles.emp_no 
+		WHERE title LIKE '%Engineer%'
+
+	) AS merge_titles_emp
+JOIN salaries ON merge_titles_emp.emp_no = salaries.emp_no
+GROUP BY
+	merge_titles_emp.title
+ORDER BY
+	avg_salary DESC;
+\end{lstlisting}
+
+
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
++--------------------+------------+
+| title              | avg_salary |
++--------------------+------------+
+| Senior Engineer    | 60543.2191 |
+| Engineer           | 59508.0397 |
+| Assistant Engineer | 59304.9863 |
++--------------------+------------+
+3 rows in set (6.90 sec)
+
+
+\end{lstlisting}
+----------------------------------------------------
+
+
+\end{document}
