@@ -1,0 +1,169 @@
+\documentclass[12pt]{report}
+\usepackage{lingmacros}
+\usepackage{tree-dvips}
+\usepackage{listings}
+
+\begin{document}
+
+\section*{Report Labwork VI}
+
+Prepare for Labwork:
+
+{\small
+\enumsentence{Using employees database}}
+
+\subsection*{I: Who have the same name as the managers of the “Finance” department?}
+
+\begin{lstlisting}[language=sql]
+
+CREATE VIEW table_no_1 AS SELECT
+	last_name
+FROM
+	dept_manager
+JOIN employees ON dept_manager.emp_no = employees.emp_no
+JOIN departments ON dept_manager.dept_no = departments.dept_no
+WHERE
+	departments.dept_name = 'Finance';
+
+\end{lstlisting}
+
+
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
+Query OK, 0 rows affected (0.02 sec)
+
+\end{lstlisting}
+
+\textbf{Use the View No.1}
+\begin{lstlisting}[language=sql]
+
+SELECT
+	first_name ,
+	last_name
+FROM
+	employees
+WHERE
+	last_name IN(SELECT * FROM table_no_1);
+
+\end{lstlisting}
+
+
+---------------------------------------------------
+
+
+\subsection*{II: Who in the “Production” department were hired after the promotion of the last manager in that department?}
+
+\begin{lstlisting}[language=sql]
+CREATE VIEW table_no_2 AS SELECT
+	MAX(from_date)
+FROM
+	dept_manager
+WHERE
+	dept_no = 'd004';
+\end{lstlisting}
+
+
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
+Query OK, 0 rows affected (0.02 sec)
+
+\end{lstlisting}
+
+\textbf{Use the View No.2}
+\begin{lstlisting}[language=sql]
+
+SELECT
+	dept_emp.emp_no ,
+	dept_emp.from_date
+FROM
+	dept_emp
+JOIN departments ON dept_emp.dept_no = departments.dept_no
+WHERE
+	dept_name = 'Production'
+AND dept_emp.from_date >(SELECT * FROM table_no_2);
+
+\end{lstlisting}
+
+---------------------------------------------------
+
+
+\subsection*{III: Find the average salary of each department, from highest to lowest.}
+
+\begin{lstlisting}[language=sql]
+CREATE VIEW table_no_3 AS SELECT
+	employees.emp_no ,
+	dept_name
+FROM
+	departments
+JOIN dept_emp ON departments.dept_no = dept_emp.dept_no
+JOIN employees ON employees.emp_no = dept_emp.emp_no;
+\end{lstlisting}
+
+
+\textbf{Output:}
+\begin{lstlisting}[language=sql]
+
+Query OK, 0 rows affected (0.01 sec)
+
+\end{lstlisting}
+
+\textbf{Use the View No.3}
+\begin{lstlisting}[language=sql]
+SELECT
+	merge_emp_dept.dept_name ,
+	AVG(salary) AS avg_salary
+FROM
+	(SELECT * FROM table_no_3) AS merge_emp_dept
+JOIN salaries ON merge_emp_dept.emp_no = salaries.emp_no
+GROUP BY
+	merge_emp_dept.dept_name
+ORDER BY
+	avg_salary DESC;
+\end{lstlisting}
+
+---------------------------------------------------
+
+\subsection*{IV: Find the average salary of each type of Engineer, from highest to lowest.}
+
+\begin{lstlisting}[language=sql]
+CREATE VIEW table_no_4 AS SELECT
+	employees.emp_no ,
+	title
+FROM
+	titles
+JOIN employees ON employees.emp_no = titles.emp_no
+WHERE
+	title LIKE '%Engineer%'
+\end{lstlisting}
+
+
+\textbf{Output:}
+
+\begin{lstlisting}[language=sql]
+
+Query OK, 0 rows affected (0.03 sec)
+
+\end{lstlisting}
+
+\textbf{Use the View No.3}
+\begin{lstlisting}[language=sql]
+SELECT
+	merge_titles_emp.title ,
+	AVG(salary) AS avg_salary
+FROM
+	(SELECT * FROM table_no_4) AS merge_titles_emp
+JOIN salaries ON merge_titles_emp.emp_no = salaries.emp_no
+GROUP BY
+	merge_titles_emp.title
+ORDER BY
+	avg_salary DESC;
+\end{lstlisting}
+
+---------------------------------------------------
+
+
+\end{document}
