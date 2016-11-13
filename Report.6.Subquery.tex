@@ -67,8 +67,9 @@ AND dept_emp.from_date >(
 		MAX(from_date)
 	FROM
 		dept_manager
+	JOIN departments ON dept_manager.dept_no = departments.dept_no
 	WHERE
-		dept_no = 'd004'
+		dept_name = 'Production'
 );
 \end{lstlisting}
 
@@ -97,42 +98,43 @@ AND dept_emp.from_date >(
 
 \begin{lstlisting}[language=sql]
 SELECT
-	merge_emp_dept.dept_name ,
-	AVG(salary) AS avg_salary
+	departments.dept_name ,
+	AVG(emp_avg) AS avg_salary
 FROM
 	(
-		SELECT
-			employees.emp_no ,
-			dept_name
-		FROM
-			departments
-		JOIN dept_emp ON departments.dept_no = dept_emp.dept_no
-		JOIN employees ON employees.emp_no = dept_emp.emp_no
-	) AS merge_emp_dept
-JOIN salaries ON merge_emp_dept.emp_no = salaries.emp_no
+	SELECT
+		employees.emp_no ,
+		AVG(salaries.salary) AS emp_avg
+	FROM
+		employees
+	JOIN salaries ON employees.emp_no = salaries.emp_no
+	GROUP BY
+		employees.emp_no
+	) AS avg_emp_salary
+JOIN dept_emp ON dept_emp.emp_no = avg_emp_salary.emp_no
+JOIN departments ON departments.dept_no = dept_emp.dept_no
 GROUP BY
-	merge_emp_dept.dept_name
-ORDER BY 
-	avg_salary DESC;
+	departments.dept_name
+ORDER BY
+	avg_salary DESC
 \end{lstlisting}
 
 
 \textbf{Output:}
 \begin{lstlisting}[language=sql]
 
-+--------------------------+------------+
-| dept_name                | avg_salary |
-+--------------------------+------------+
-| Marketing and Sales      | 78220.6010 |
-| Finance                  | 70489.3649 |
-| Production               | 59605.4825 |
-| Research and Development | 59517.6088 |
-| Customer Service         | 58770.3665 |
-| Quality Management       | 57251.2719 |
-| Human Resources          | 55574.8794 |
-+--------------------------+------------+
-7 rows in set (8.61 sec)
-
++--------------------------+----------------+
+| dept_name                | avg_salary     |
++--------------------------+----------------+
+| Marketing and Sales      | 75852.69558780 |
+| Finance                  | 68061.43501801 |
+| Production               | 57253.31382027 |
+| Research and Development | 57188.90672100 |
+| Customer Service         | 56480.08591880 |
+| Quality Management       | 54892.93507273 |
+| Human Resources          | 53214.29085744 |
++--------------------------+----------------+
+7 rows in set (3.99 sec)
 
 \end{lstlisting}
 ----------------------------------------------------
